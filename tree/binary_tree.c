@@ -121,3 +121,11 @@ void postOrder(btnode* p){
   printf("%d ",p->data);
 }
 
+int height(btnode* root){
+
+}
+
+int nodeCount(btnode* root){
+  
+}
+

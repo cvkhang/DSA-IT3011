@@ -43,7 +43,21 @@ etnode* findNode_inArray(datatype x, etnode** p,int p_count){
   return NULL;
 }
 
-void addChild_et(etnode* child, etnode* dad) {
+etnode *findNode_et(etnode *r, datatype x){
+	if(r == NULL) return NULL;
+	if(r->data == x) return r;
+	
+	etnode *p = r->leftchild,*q;
+	while(p!=NULL){
+		q=findNode(p,x);
+		if(q!=NULL) return q;
+		p = p->rightsib;
+	}
+	
+	return NULL;
+}
+
+void addChild_et(etnode* dad, etnode* child) {
   if (dad->leftchild == NULL) {
     dad->leftchild = child;
   }
@@ -85,4 +99,139 @@ void countDescendants_et(etnode* p,int* count) {
   }
 }
 
+void preOrder(etnode *r){
+	if(r == NULL) return;
+	printf("%c ",r->data);
+	
+	etnode *p = r->leftchild;
+	while(p!=NULL){
+		preOrder(p);
+		p = p->rightsib;
+	}
+}
+
+void postOrder(etnode *r){
+	if(r == NULL) return;
+	
+	etnode *p = r->leftchild;
+	while(p!=NULL){
+		postOrder(p);
+		p = p->rightsib;
+	}
+
+	printf("%c ",r->data);
+}
+
+void inOrder(etnode *r){
+	if(r == NULL) return;
+	
+	etnode *p = r->leftchild;
+	inOrder(p);
+	printf("%c ",r->data);
+	
+	if(p!=NULL) p = p->rightsib;
+	while(p!=NULL){
+		inOrder(p);
+		p = p->rightsib;
+	}
+}
+
+int count(etnode* r){
+	if(r == NULL) return 0;
+	int dem=1;
+	
+	TNode *p = r->leftchild;
+	while(p!=NULL){
+		dem+=count(p);
+		p = p->removeNode;
+	}
+	
+	return dem;
+}
+
+
+int countLeaves(etnode* r){
+	if(r == NULL) return 0;
+	if(r->leftchild==NULL) return 1;
+	
+	int dem=0;
+	
+	etnode *p = r->leftchild;
+	while(p!=NULL){
+		dem+=countLeaves(p);
+		p = p->rightsib;
+	}
+	
+	return dem;
+}
+
+int countNodeKChild(etnode* r, int k){
+	if(r == NULL || k<=0) return 0;
+
+	int dem=0,c=0;
+	
+	etnode *p = r->leftchild;
+	while(p!=NULL){
+		c++;
+		dem+=countNodeKChild(p,k);
+		p = p->rightsib;
+	}
+	
+	if(c==k)
+		return dem + 1;
+	else return dem;
+}
+
+int height(etnode* p){
+	if(p == NULL) return 0;
+	int hc, maxh=0;
+	
+	etnode *pp = p->leftchild;
+	while(pp!=NULL){
+		hc=height(pp);
+		if(hc>maxh) maxh=hc;
+		pp = pp->rightsib;
+	}
+	
+	return maxh+1;
+}
+
+etnode* parent(etnode* r, etnode* q){
+	if(r == NULL) return NULL;
+	
+	etnode *p = r->leftchild;
+	while(p!=NULL){
+		if(p==q) return r;
+		p = p->rightsib;
+	}
+	
+	p = r->leftchild;
+	etnode *pp=NULL;
+	while(p!=NULL){
+		pp=parent(p,q);
+		if(pp!=NULL) return pp;
+		p = p->rightsib;
+	}
+	
+	return NULL;
+}
+
+int stepdepth(etnode* r, datatype v, int level){
+	if(r == NULL) return 0;
+	if(r->data == v) return level;
+	
+	etnode *p = r->leftchild;
+	int lv=0;
+	while(p!=NULL){
+		lv=stepdepth(p,v,level+1);
+		if(lv!=0) return lv;
+		p = p->rightsib;
+	}
+	
+	return 0;
+}
+
+int depth(ecvt* r, datatype v){
+	return stepdepth(r,v,1);
+}
 

@@ -70,39 +70,43 @@ btnode* findmin_bst(btnode* p){
   }
 }
 
-btnode* delete_bst(btnode* p, datatype x){
-  if(p == NULL) return NULL;
-
-  if(p->data == x ){
-    if(p->left == NULL && p->right == NULL){
-      free(p);
-      return NULL;
-    }
-    if(p->left != NULL && p->right == NULL){
-      btnode* temp = p->left;
-      free(p);
-      return temp;
-    }
-    if(p->left == NULL && p->right != NULL){
-      btnode* temp = p->right;
-      free(p);
-      return temp;
-    }
-
-    btnode* successor_p = findmin_bst(p->right);
-		p->data = successor_p->data;
-		p->right = delete_bst(p->right,successor_p->data);
-		return p;
-    
-  }
-
-  if(p->data > x){
-    p->left = delete_bst(p->left, x);
-  }
-  else{
-    p->right = delete_bst(p->right,x);
-  }
-
-  return p;
+btnode *delete_bst(btnode *r, int v){
+	if(r==NULL) return NULL;
+	if(r->data == v) { //thuc hien xoa nut co khoa la v
+		//TH1
+		if(r->left==NULL && r->right==NULL)
+		{
+			free(r);
+			return NULL;
+		}
+		//TH2
+		if(r->left!=NULL && r->right==NULL)
+		{
+			Node *tmp = r->left;
+			free(r);
+			return tmp;
+		}
+		//TH3
+		if(r->left==NULL && r->right!=NULL)
+		{
+			Node *tmp = r->right;
+			free(r);
+			return tmp;
+		}
+		//TH4
+		Node *successor_r = findmin_bst(r->right);
+		r->data = successor_r->data;
+		r->right = delete_bst(r->right,successor_r->data);
+		return r;
+	}
+	
+	if(r->data > v){
+		r->left = delete_bst(r->left,v);
+	} 
+	else 
+	{
+		r->right = delete_bst(r->right,v);
+	}
+	return r;
 }
 
