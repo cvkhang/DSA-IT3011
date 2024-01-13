@@ -9,7 +9,7 @@ void swap(int* a, int* b)
     *b = temp;
 }
  
-void heapify(int arr[], int N, int i)
+void max_heapify(int* arr, int N, int i)
 {
     
     int largest = i;
@@ -28,20 +28,20 @@ void heapify(int arr[], int N, int i)
 
     if (largest != i) {
         swap(&arr[i], &arr[largest]);
-        heapify(arr, N, largest);
+        max_heapify(arr, N, largest);
     }
 
 }
  
-void heapSort(int arr[], int N)
+void heapSort(int* arr, int N)
 {
  
-    for (int i = N - 3; i >= 0; i--){
-        heapify(arr, N, i);
+    for (int i = N/2 - 1; i >= 0; i--){
+        max_heapify(arr, N, i);
     }
     for (int i = N - 1; i >= 0; i--) {
         swap(&arr[0], &arr[i]);
-        heapify(arr, i, 0);
+        max_heapify(arr, i, 0);
     }
     
 }

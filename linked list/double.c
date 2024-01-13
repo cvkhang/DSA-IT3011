@@ -98,40 +98,40 @@ DLNode* insertBefore(DLNode* head, DLNode* a, datatype x){
 }
 
 void insertLast(DLList *list, datatype x){
-	DNode* q = makeNode(x);
+	DLNode* q = makeNode(x);
 
-	if(list->first == NULL && list->last == NULL){
-		list->first = q;
-		list->last = q;
+	if(list->head == NULL && list->tail == NULL){
+		list->head = q;
+		list->tail = q;
 		return;
 	}
 	
-	q->prev = list->last;
-	list->last->next = q;
-	list->last = q;
+	q->prev = list->tail;
+	list->tail->next = q;
+	list->tail = q;
 }
 
 void removeNode(DLList* list, DLNode *p) {
 	if(p == NULL) return;
-	if(list->first == NULL && list->last == NULL) return; 
+	if(list->head == NULL && list->tail == NULL) return; 
 	
-	if(list->first == list->last && p == list->first){
-		list->first = NULL;
-		list->last = NULL; 
+	if(list->head == list->tail && p == list->head){
+		list->head = NULL;
+		list->tail = NULL; 
 		free(p);
 		return;
 	}
 	
-	if(p == list->first){
-		list->first = p->next; 
-		list->first->prev = NULL;
+	if(p == list->head){
+		list->head = p->next; 
+		list->head->prev = NULL;
 		free(p); 
 		return;
 	}
 	
-	if(p == list->last){
-		list->last = p->prev; 
-		list->last->next = NULL;
+	if(p == list->tail){
+		list->tail = p->prev; 
+		list->tail->next = NULL;
 		free(p); 
 		return;
 	}
@@ -154,7 +154,7 @@ DLNode* removeNode_byval(DLNode* head, datatype x){
     return head;
   }
 
-  tofree = prev->next;
+  DLNode* tofree = prev->next;
   prev->next = tofree->next;
   free(tofree);
   return head;
@@ -172,21 +172,21 @@ int nodeCount(DLNode* head){
   return count;
 }
 
-int count(DNode* pp, int x) {
+int count(DLNode* pp, int x) {
 	int dem=0;
 	DLNode *p=pp;
 	while(p != NULL){
-		if(p->inf==x) dem++;
+		if(p->data==x) dem++;
 		p = p->next;
 	}
 	
 	p=pp;
 	while(p != NULL){
-		if(p->inf==x) dem++;
+		if(p->data==x) dem++;
 		p = p->prev;
 	}
 	
-	if(pp->inf==x) dem--;
+	if(pp->data==x) dem--;
 	
 	return dem;
 }

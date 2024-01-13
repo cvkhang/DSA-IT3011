@@ -123,7 +123,7 @@ LNode* removeNode_byval(LNode* head, datatype x){
     return head;
   }
 
-  tofree = prev->next;
+  LNode* tofree = prev->next;
   prev->next = tofree->next;
   free(tofree);
   return head;
@@ -140,6 +140,3 @@ int nodeCount(LNode* head){
   }
   return count;
 }
-
-
-
