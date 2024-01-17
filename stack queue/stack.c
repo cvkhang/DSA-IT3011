@@ -35,9 +35,9 @@ void push(stack* a, datatype x){
 
 datatype pop(stack* a){
   datatype temp = a->head->data;
-  snode* free = a->head;
+  snode* tofree = a->head;
   a->head = a->head->next;
-  free(free);
+  free(tofree);
   return temp;
 }
 
