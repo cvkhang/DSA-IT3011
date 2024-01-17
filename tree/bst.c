@@ -70,7 +70,7 @@ btnode* findmin_bst(btnode* p){
   }
 }
 
-btnode *delete_bst(btnode *r, int v){
+btnode *delete_bst(btnode *r, datatype v){
 	if(r==NULL) return NULL;
 	if(r->data == v) { //thuc hien xoa nut co khoa la v
 		//TH1
@@ -82,19 +82,19 @@ btnode *delete_bst(btnode *r, int v){
 		//TH2
 		if(r->left!=NULL && r->right==NULL)
 		{
-			Node *tmp = r->left;
+			btnode *tmp = r->left;
 			free(r);
 			return tmp;
 		}
 		//TH3
 		if(r->left==NULL && r->right!=NULL)
 		{
-			Node *tmp = r->right;
+			btnode *tmp = r->right;
 			free(r);
 			return tmp;
 		}
 		//TH4
-		Node *successor_r = findmin_bst(r->right);
+		btnode *successor_r = findmin_bst(r->right);
 		r->data = successor_r->data;
 		r->right = delete_bst(r->right,successor_r->data);
 		return r;

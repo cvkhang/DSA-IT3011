@@ -140,10 +140,10 @@ int count(etnode* r){
 	if(r == NULL) return 0;
 	int dem=1;
 	
-	TNode *p = r->leftchild;
+	etnode *p = r->leftchild;
 	while(p!=NULL){
 		dem+=count(p);
-		p = p->removeNode;
+		p = p->rightsib;
 	}
 	
 	return dem;
@@ -231,7 +231,7 @@ int stepdepth(etnode* r, datatype v, int level){
 	return 0;
 }
 
-int depth(ecvt* r, datatype v){
+int depth(etnode* r, datatype v){
 	return stepdepth(r,v,1);
 }
 
