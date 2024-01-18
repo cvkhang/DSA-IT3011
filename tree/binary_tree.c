@@ -121,11 +121,87 @@ void postOrder(btnode* p){
   printf("%d ",p->data);
 }
 
-int height(btnode* root){
-
+int height(btnode *r){
+	if(r == NULL) return 0;	
+	
+	int hl = height(r->left);
+	int hr = height(r->right);
+	
+	if(hl>hr) return hl+1;
+	else return hr+1;
 }
 
-int nodeCount(btnode* root){
-  
+int count(btnode *r){
+	if(r == NULL) return 0;
+	int dem=1;
+		
+	dem += count(r->left);
+	dem += count(r->right);
+
+	return dem;
+}
+
+int countLeaves(btnode* r){
+	if(r == NULL) return 0;
+	if(r->left==NULL && r->right==NULL) return 1;
+	int dem=0;
+		
+	dem += countLeaves(r->left);
+	dem += countLeaves(r->right);
+
+	return dem;
+}
+
+int countNodeKChild(btnode *r, int k){
+	if(r == NULL || k<0 || k>2) return 0;
+	int dem=0,c=0;
+	
+	dem += countNodeKChild(r->left,k);
+	dem += countNodeKChild(r->right,k);
+	
+	if(r->left!=NULL) c++;
+	if(r->right!=NULL) c++;
+	
+	if(c==k) dem++;
+	
+	return dem;
+}
+
+int countNodeLeftChild(btnode *r){
+	if(r == NULL) return 0;
+	int dem=0;
+	
+	dem += countNodeLeftChild(r->left);
+	dem += countNodeLeftChild(r->right);
+	
+	if(r->left!=NULL && r->right==NULL) dem++;
+	
+	return dem;
+}
+
+btnode* parent(btnode* r, btnode* p){
+	if(r == NULL) return NULL;
+	if(r->left == p || r->right == p) return r;
+	
+	btnode* q = parent(r->left,p);
+	if(q!=NULL) return q;
+	
+	return parent(r->right,p);
+}
+
+int stepdepth(btnode* r, btnode* p, int k){
+	if(r == NULL) return 0;
+	if(r == p) return k;
+
+	int l1 = stepdepth(r->left, p, k+1);
+	if(l1!=0) return l1;
+	
+	return stepdepth(r->right, p, k+1);
+}
+
+int depth(btnode* r, btnode* p){
+	if(r == NULL || p == NULL) return 0;
+	
+	return stepdepth(r,p,1);
 }
 
