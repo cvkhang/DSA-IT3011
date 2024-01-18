@@ -6,7 +6,7 @@ typedef int datatype;
 
 typedef struct qnode{
   datatype data;
-  qnode* next;
+  struct qnode* next;
 } qnode;
 
 typedef struct queue{

@@ -6,7 +6,7 @@ typedef int datatype;
 
 typedef struct snode{
   datatype data;
-  snode* next;
+  struct snode* next;
 } snode;
 
 typedef struct stack{
