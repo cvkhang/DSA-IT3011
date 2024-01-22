@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int distance[100000];
-int index[100000];
-int prio_queue[100000];
+int distance[100001];
+int indx[100001];
+int prio_queue[100001];
 int n = 0;
 
 typedef struct node {
@@ -30,7 +30,7 @@ node* createNode(int v, int weight) {
 graph* createAGraph(int vertices) {
   graph* g = (graph*) malloc(sizeof(graph));
   g->numVertices = vertices;
-  g->adjLists = (node*) malloc((vertices+1) * sizeof(node*));
+  g->adjLists = (node**) malloc((vertices+1) * sizeof(node*));
 
   int i;
   for (i = 1; i <= vertices; i++){
@@ -54,8 +54,8 @@ void swap(int i,int j){
   prio_queue[i] = prio_queue[j];
   prio_queue[j] = temp;
 
-  index[prio_queue[i]] = i;
-  index[prio_queue[j]] = j;
+  indx[prio_queue[i]] = i;
+  indx[prio_queue[j]] = j;
 }
 
 void min_heapify(int i){
@@ -98,7 +98,7 @@ int deleteMin(){
 }
 
 int inHeap(int v){
-  if(index[v] >= 0){
+  if(indx[v] >= 0){
     return 1;
   }
   return 0;
@@ -107,18 +107,14 @@ int inHeap(int v){
 void update_Distance(int v, int new_distance){
   if(distance[v] > new_distance){
     distance[v] = new_distance;
-    upHeap(index[v]);
-  }
-  else{
-    distance[v] = new_distance;
-    min_heapify(index[v]);
+    upHeap(indx[v]);
   }
 }
 
 void insert_queue(int v, int v_distance){
   distance[v] = v_distance;
   prio_queue[n] = v;
-  index[v] = n;
+  indx[v] = n;
   upHeap(n);
   n++;
 }
@@ -128,11 +124,12 @@ void init(int s, graph* g){
   for(int i = 1; i <= g->numVertices; i++){
     //-2 -> chua vao heap
     //-1 -> da vao heap, da duoc lay ra
-    index[i] = -2;
+    indx[i] = -2;
+    distance[i] = 1e9;
   }
 
   distance[s] = 0;
-  index[s] = -1;
+  indx[s] = -1;
   node* s_adj = g->adjLists[s];
   while(s_adj != NULL){
     int v = s_adj->vertex;
@@ -145,10 +142,53 @@ void init(int s, graph* g){
 
 int main(){
 
+  int v,e;
+  scanf("%d %d", &v,&e);
+  getchar();
 
+  int s,d,w;
+  graph* g = createAGraph(v);
+  for(int i = 0; i < e; i++){
+    scanf("%d %d %d",&s,&d,&w);
+    getchar();
+    addEdge(g,s,d,w);
+  }
 
-    
+  scanf("%d %d", &s, &d);
 
+  init(s,g);
+  while(n > 0 && indx[d] != -1){
+    int u = deleteMin();
+    indx[u] = -1;
+    node* u_adj = g->adjLists[u];
+    while(u_adj != NULL){
+      v = u_adj->vertex;
+      w = u_adj->weight;
+      //da duoc lay ra
+      if(indx[v] == -1){
+        u_adj = u_adj->next;
+        continue;
+      }
+      //dang o trong queue
+      if(indx[v] >= 0){
+        if(distance[v] > distance[u] + w){
+          update_Distance(v,distance[u] + w);
+        }
+      }
+      //chua vao queue
+      else{
+        insert_queue(v,w+distance[u]);
+      }
+      u_adj = u_adj->next;
+    }
+  }
+
+  if(indx[d] == -2){
+    printf("-1");
+  }
+  else{
+    printf("%d", distance[d]);
+  }
 
   return 0;
 }

@@ -8,6 +8,31 @@ void swap(int* a, int* b)
     *a = *b;
     *b = temp;
 }
+
+void min_heapify(int* arr, int N, int i)
+{
+    
+    int largest = i;
+ 
+    int left = 2 * i ;
+ 
+    int right = 2 * i + 1;
+ 
+    if (left < N && arr[left] < arr[largest]){
+        largest = left;
+    }
+
+    if (right < N && arr[right] < arr[largest]){
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        min_heapify(arr, N, largest);
+    }
+
+}
+ 
  
 void max_heapify(int* arr, int N, int i)
 {
