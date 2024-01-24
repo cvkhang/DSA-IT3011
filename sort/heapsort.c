@@ -39,9 +39,9 @@ void max_heapify(int* arr, int N, int i)
     
     int largest = i;
  
-    int left = 2 * i ;
+    int left = 2 * i +1;
  
-    int right = 2 * i + 1;
+    int right = 2 * i + 2;
  
     if (left < N && arr[left] > arr[largest]){
         largest = left;
