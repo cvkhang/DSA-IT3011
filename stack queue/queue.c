@@ -68,3 +68,55 @@ int isQueueEmpty(queue* a){
 	return 0;
 }
 
+datatype peek(queue* a){
+    if(a == NULL || a->first == NULL){
+        printf("Queue is empty\n");
+        exit(1);
+    }
+
+    return a->first->data;
+}
+
+void printQueue(queue* a){
+    if(a == NULL || a->first == NULL){
+        printf("Queue is empty\n");
+        return;
+    }
+
+    qnode* p = a->first;
+    while(p != NULL){
+        printf("%d ", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
+
+int countQueue(queue* a){
+    if(a == NULL) return 0;
+
+    int count = 0;
+    qnode* p = a->first;
+
+    while(p != NULL){
+        count++;
+        p = p->next;
+    }
+
+    return count;
+}
+
+void clearQueue(queue* a){
+    if(a == NULL) return;
+
+    qnode* p = a->first;
+
+    while(p != NULL){
+        qnode* temp = p;
+        p = p->next;
+        free(temp);
+    }
+
+    a->first = NULL;
+    a->last = NULL;
+}
+
