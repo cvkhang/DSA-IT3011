@@ -23,7 +23,7 @@ DLNode* makeDLNode(datatype x){
   return p;
 }
 
-DLNode* makeDLList(){
+DLList* makeDLList(){
   DLList* p = (DLList*) malloc(sizeof(DLList));
   p->head = NULL;
   p->tail = NULL;
@@ -46,59 +46,58 @@ DLNode* findNode(DLNode* head, datatype x){
 
 }
 
+void insertAfter(DLList* list, DLNode* a, datatype x){
+  if(list == NULL || a == NULL) return;
 
-DLNode* findprevNode(DLNode* head, DLNode* a){
-  if(head == NULL || a == NULL){
-    return NULL;
-  }
+  DLNode* q = makeDLNode(x);
 
-  DLNode* w = head;
-  while(w->next!=a){
-    w = w->next;
-  }
-
-  return w;
-}
-
-DLNode* insertAfter(DLNode* head, DLNode* a, datatype x){
-  if(a == NULL){
-    return head;
-  }
-  DLNode* q = makeLNode(x);
-  if(head == NULL){
-    return q;
-  }
   q->next = a->next;
+  q->prev = a;
+
+  if(a->next != NULL){
+    a->next->prev = q;
+  } else {
+    list->tail = q;
+  }
+
   a->next = q;
-  return head;
 }
 
-DLNode* insertBefore(DLNode* head, DLNode* a, datatype x){
-  if(a==NULL){
-    return head;
-  }
+void insertBefore(DLList* list, DLNode* a, datatype x){
+  if(list == NULL || a == NULL) return;
 
-  DLNode* q = makeLNode(x);
-  if(head == NULL){
-    return q;
-  }
-  if(head == a){
-    q->next = head;
-    return q;
-  }
-  
-  DLNode* w = head;
-  while (w->next != a) {
-    w = w->next;
-  }
+  DLNode* q = makeDLNode(x);
 
-  w->next = q;
   q->next = a;
-  return head;
+  q->prev = a->prev;
+
+  if(a->prev != NULL){
+    a->prev->next = q;
+  } else {
+    list->head = q;
+  }
+
+  a->prev = q;
+}
+
+void insertFirst(DLList* list, datatype x){
+  if(list == NULL) return;
+
+  DLNode* q = makeDLNode(x);
+
+  if(list->head == NULL && list->tail == NULL){
+    list->head = q;
+    list->tail = q;
+    return;
+  }
+
+  q->next = list->head;
+  list->head->prev = q;
+  list->head = q;
 }
 
 void insertLast(DLList *list, datatype x){
-	DLNode* q = makeNode(x);
+	DLNode* q = makeDLNode(x);
 
 	if(list->head == NULL && list->tail == NULL){
 		list->head = q;
@@ -112,53 +111,47 @@ void insertLast(DLList *list, datatype x){
 }
 
 void removeNode(DLList* list, DLNode *p) {
-	if(p == NULL) return;
-	if(list->head == NULL && list->tail == NULL) return; 
-	
-	if(list->head == list->tail && p == list->head){
-		list->head = NULL;
-		list->tail = NULL; 
-		free(p);
-		return;
-	}
-	
-	if(p == list->head){
-		list->head = p->next; 
-		list->head->prev = NULL;
-		free(p); 
-		return;
-	}
-	
-	if(p == list->tail){
-		list->tail = p->prev; 
-		list->tail->next = NULL;
-		free(p); 
-		return;
-	}
-	
-	p->prev->next = p->next;
-	p->next->prev = p->prev;
-	free(p);
+  if(list == NULL || p == NULL) return;
+  if(list->head == NULL && list->tail == NULL) return; 
+
+  if(list->head == list->tail && p == list->head){
+    list->head = NULL;
+    list->tail = NULL; 
+    free(p);
+    return;
+  }
+
+  if(p == list->head){
+    list->head = p->next; 
+    list->head->prev = NULL;
+    free(p); 
+    return;
+  }
+
+  if(p == list->tail){
+    list->tail = p->prev; 
+    list->tail->next = NULL;
+    free(p); 
+    return;
+  }
+
+  p->prev->next = p->next;
+  p->next->prev = p->prev;
+  free(p);
 }
 
-DLNode* removeNode_byval(DLNode* head, datatype x){
-  if(head == NULL){
-    return NULL;
+void removeNode_byval(DLList* list, datatype x){
+  if(list == NULL) return;
+
+  DLNode* p = list->head;
+
+  while(p != NULL && p->data != x){
+    p = p->next;
   }
 
-  DLNode* prev = head;
-  while(prev->next != NULL && prev->next->data != x){
-    prev=prev->next;
-  }
-  if(prev->next == NULL){
-    return head;
-  }
+  if(p == NULL) return;
 
-  DLNode* tofree = prev->next;
-  prev->next = tofree->next;
-  free(tofree);
-  return head;
-  
+  removeNode(list, p);
 }
 
 
@@ -172,23 +165,44 @@ int nodeCount(DLNode* head){
   return count;
 }
 
-int count(DLNode* pp, int x) {
-	int dem=0;
-	DLNode *p=pp;
-	while(p != NULL){
-		if(p->data==x) dem++;
-		p = p->next;
-	}
-	
-	p=pp;
-	while(p != NULL){
-		if(p->data==x) dem++;
-		p = p->prev;
-	}
-	
-	if(pp->data==x) dem--;
-	
-	return dem;
+int countValue(DLList* list, datatype x){
+  if(list == NULL) return 0;
+
+  int dem = 0;
+  DLNode* p = list->head;
+
+  while(p != NULL){
+    if(p->data == x) dem++;
+    p = p->next;
+  }
+
+  return dem;
+}
+
+void printForward(DLList* list){
+  if(list == NULL) return;
+
+  DLNode* p = list->head;
+
+  while(p != NULL){
+    printf("%d ", p->data);
+    p = p->next;
+  }
+
+  printf("\n");
+}
+
+void printBackward(DLList* list){
+  if(list == NULL) return;
+
+  DLNode* p = list->tail;
+
+  while(p != NULL){
+    printf("%d ", p->data);
+    p = p->prev;
+  }
+
+  printf("\n");
 }
 
 
