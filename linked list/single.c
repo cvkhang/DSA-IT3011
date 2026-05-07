@@ -18,28 +18,26 @@ LNode* makeLNode(datatype x){
 
 
 LNode* findNode(LNode* head, datatype x){
-  if(head == NULL){
-    return head;
-  }
-
   LNode* w = head;
-  if(w->data == x){
-    return w;
-  }
-  else{
-    return findNode(w->next,x);
+
+  while(w != NULL){
+    if(w->data == x){
+      return w;
+    }
+    w = w->next;
   }
 
+  return NULL;
 }
 
 
 LNode* findprevNode(LNode* head, LNode* a){
-  if(head == NULL || a == NULL){
+  if(head == NULL || a == NULL || head == a){
     return NULL;
   }
 
   LNode* w = head;
-  while(w->next!=a){
+  while(w != NULL && w->next != a){
     w = w->next;
   }
 
@@ -60,27 +58,40 @@ LNode* insertAfter(LNode* head, LNode* a, datatype x){
 }
 
 LNode* insertBefore(LNode* head, LNode* a, datatype x){
-  if(a==NULL){
+  if(a == NULL){
     return head;
   }
 
   LNode* q = makeLNode(x);
+
   if(head == NULL){
     return q;
   }
+
   if(head == a){
     q->next = head;
     return q;
   }
-  
+
   LNode* w = head;
-  while (w->next != a) {
+  while(w != NULL && w->next != a){
     w = w->next;
+  }
+
+  if(w == NULL){
+    free(q);
+    return head;
   }
 
   w->next = q;
   q->next = a;
   return head;
+}
+
+LNode* insertFirst(LNode* head, datatype x){
+  LNode* p = makeLNode(x);
+  p->next = head;
+  return p;
 }
 
 LNode* insertLast(LNode* head, datatype x){
@@ -104,7 +115,17 @@ LNode* removeNode(LNode* head, LNode* a){
     return head;
   }
 
-  LNode* prev = findprevNode(head,a);
+  if(head == a){
+    LNode* newHead = head->next;
+    free(head);
+    return newHead;
+  }
+
+  LNode* prev = findprevNode(head, a);
+  if(prev == NULL){
+    return head;
+  }
+
   prev->next = a->next;
   free(a);
   return head;
@@ -115,10 +136,17 @@ LNode* removeNode_byval(LNode* head, datatype x){
     return NULL;
   }
 
+  if(head->data == x){
+    LNode* newHead = head->next;
+    free(head);
+    return newHead;
+  }
+
   LNode* prev = head;
   while(prev->next != NULL && prev->next->data != x){
-    prev=prev->next;
+    prev = prev->next;
   }
+
   if(prev->next == NULL){
     return head;
   }
@@ -126,8 +154,8 @@ LNode* removeNode_byval(LNode* head, datatype x){
   LNode* tofree = prev->next;
   prev->next = tofree->next;
   free(tofree);
+
   return head;
-  
 }
 
 
@@ -139,4 +167,15 @@ int nodeCount(LNode* head){
     w = w->next;
   }
   return count;
+}
+
+void printList(LNode* head){
+  LNode* w = head;
+
+  while(w != NULL){
+    printf("%d ", w->data);
+    w = w->next;
+  }
+
+  printf("\n");
 }
