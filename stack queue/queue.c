@@ -45,22 +45,21 @@ void enqueue(queue* a, datatype x){
 
 }
 
-datatype dequeue(queue* a){
-  
-  datatype temp = a->first->data;
+int dequeue(queue* a, datatype* out){
+    if(a == NULL || a->first == NULL) return 0;
 
-  if(a->first == a->last){
-    free(a->first);
-    a->first = NULL;
-    a->last = NULL;
-    return temp;
-  }
+    qnode* tofree = a->first;
+    *out = tofree->data;
 
-  qnode* tofree = a->first;
-  a->first = a->first->next;
-  free(tofree);
-  return temp;
+    if(a->first == a->last){
+        a->first = NULL;
+        a->last = NULL;
+    } else {
+        a->first = a->first->next;
+    }
 
+    free(tofree);
+    return 1;
 }
 
 int isQueueEmpty(queue* a){
