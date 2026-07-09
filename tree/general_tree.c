@@ -49,7 +49,7 @@ etnode *findNode_et(etnode *r, datatype x){
 	
 	etnode *p = r->leftchild,*q;
 	while(p!=NULL){
-		q=findNode(p,x);
+		q=findNode_et(p,x);
 		if(q!=NULL) return q;
 		p = p->rightsib;
 	}
