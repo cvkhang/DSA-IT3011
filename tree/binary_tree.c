@@ -16,6 +16,7 @@ typedef struct btree{
   int height;
 }btree;
 
+//Make
 btnode* makeNode(datatype x){
   btnode* p = (btnode*) malloc(sizeof(btnode));
   p->data = x;
@@ -32,6 +33,7 @@ btree* makeTree(){
   return t;
 }
 
+//Add
 void addChild(btnode* child, btnode* dad){
   if(dad->left != NULL && dad->right != NULL){
     printf("Node Full\n");
@@ -69,28 +71,127 @@ void addRight(btnode* child, btnode* dad){
   }
 }
 
+//Find
 btnode* findNode(btnode* p, datatype x) {
+  if (p == NULL) {
+    return NULL;
+  }
+
   if (p->data == x) {
     return p;
   }
 
-  if (p->left != NULL) {
-    btnode* leftResult = findNode(p->left, x);
-    if (leftResult != NULL) {
-      return leftResult;
-    }
+ btnode* result = findNode(p->left, x);
+  if (result != NULL) {
+    return result;
   }
 
-  if (p->right != NULL) {
-    btnode* rightResult = findNode(p->right, x);
-    if (rightResult != NULL) {
-      return rightResult;
-    }
-  }
-
-  return NULL;
+  return findNode(p->right, x);
 }
 
+btnode* parent(btnode* r, btnode* p){
+	if(r == NULL) return NULL;
+	if(r->left == p || r->right == p) return r;
+	
+	btnode* q = parent(r->left,p);
+	if(q!=NULL) return q;
+	
+	return parent(r->right,p);
+}
+
+int max2(int a, int b){
+    return a > b ? a : b;
+}
+
+datatype maxValue(btnode* r){
+    if(r == NULL){
+        printf("Tree is empty\n");
+        exit(1);
+    }
+
+    datatype max = r->data;
+
+    if(r->left != NULL)
+        max = max2(max, maxValue(r->left));
+
+    if(r->right != NULL)
+        max = max2(max, maxValue(r->right));
+
+    return max;
+}
+
+int min2(int a, int b){
+    return a < b ? a : b;
+}
+
+datatype minValue(btnode* r){
+    if(r == NULL){
+        printf("Tree is empty\n");
+        exit(1);
+    }
+
+    datatype min = r->data;
+
+    if(r->left != NULL)
+        min = min2(min, minValue(r->left));
+
+    if(r->right != NULL)
+        min = min2(min, minValue(r->right));
+
+    return min;
+}
+
+btnode* lowestCommonAncestor(btnode* r, btnode* p, btnode* q){
+    if(r == NULL || r == p || r == q)
+        return r;
+
+    btnode* leftResult =
+        lowestCommonAncestor(r->left, p, q);
+
+    btnode* rightResult =
+        lowestCommonAncestor(r->right, p, q);
+
+    if(leftResult != NULL && rightResult != NULL)
+        return r;
+
+    if(leftResult != NULL)
+        return leftResult;
+
+    return rightResult;
+}
+
+int distanceFrom(btnode* r, btnode* p){
+    if(r == NULL || p == NULL) return -1;
+    if(r == p) return 0;
+
+    int leftDistance = distanceFrom(r->left, p);
+    if(leftDistance != -1)
+        return leftDistance + 1;
+
+    int rightDistance = distanceFrom(r->right, p);
+    if(rightDistance != -1)
+        return rightDistance + 1;
+
+    return -1;
+}
+
+int distanceBetweenNodes(btnode* root, btnode* p, btnode* q){
+    if(root == NULL || p == NULL || q == NULL)
+        return -1;
+
+    btnode* lca = lowestCommonAncestor(root, p, q);
+    if(lca == NULL) return -1;
+
+    int d1 = distanceFrom(lca, p);
+    int d2 = distanceFrom(lca, q);
+
+    if(d1 == -1 || d2 == -1)
+        return -1;
+
+    return d1 + d2;
+}
+
+//Traverse
 void preOrder(btnode* p){
   if(p==NULL){
     return;
@@ -121,16 +222,71 @@ void postOrder(btnode* p){
   printf("%d ",p->data);
 }
 
-int height(btnode *r){
-	if(r == NULL) return 0;	
-	
-	int hl = height(r->left);
-	int hr = height(r->right);
-	
-	if(hl>hr) return hl+1;
-	else return hr+1;
+int sumTree(btnode* r){
+    if(r == NULL) return 0;
+
+    return r->data
+        + sumTree(r->left)
+        + sumTree(r->right);
 }
 
+void printLevel(btnode* r, int k){
+    if(r == NULL || k <= 0) return;
+
+    if(k == 1){
+        printf("%d ", r->data);
+        return;
+    }
+
+    printLevel(r->left, k - 1);
+    printLevel(r->right, k - 1);
+}
+
+int printPath(btnode* r, datatype x){
+    if(r == NULL) return 0;
+
+    if(r->data == x){
+        printf("%d ", r->data);
+        return 1;
+    }
+
+    if(printPath(r->left, x) || printPath(r->right, x)){
+        printf("%d ", r->data);
+        return 1;
+    }
+
+    return 0;
+}
+
+int getPath(btnode* r, datatype x, datatype path[], int* length){
+    if(r == NULL) return 0;
+
+    path[*length] = r->data;
+    (*length)++;
+
+    if(r->data == x) return 1;
+
+    if(getPath(r->left, x, path, length)) return 1;
+    if(getPath(r->right, x, path, length)) return 1;
+
+    (*length)--;
+    return 0;
+}
+
+void printRootToNodePath(btnode* root, datatype x){
+    datatype path[1000];
+    int length = 0;
+
+    if(getPath(root, x, path, &length)){
+        for(int i = 0; i < length; i++){
+            printf("%d ", path[i]);
+        }
+    }else{
+        printf("Not found");
+    }
+}
+
+//Count
 int count(btnode *r){
 	if(r == NULL) return 0;
 	int dem=1;
@@ -142,14 +298,10 @@ int count(btnode *r){
 }
 
 int countLeaves(btnode* r){
-	if(r == NULL) return 0;
-	if(r->left==NULL && r->right==NULL) return 1;
-	int dem=0;
-		
-	dem += countLeaves(r->left);
-	dem += countLeaves(r->right);
+    if(r == NULL) return 0;
+    if(isLeaf(r)) return 1;
 
-	return dem;
+    return countLeaves(r->left) + countLeaves(r->right);
 }
 
 int countNodeKChild(btnode *r, int k){
@@ -167,7 +319,19 @@ int countNodeKChild(btnode *r, int k){
 	return dem;
 }
 
-int countNodeLeftChild(btnode *r){
+int countOneChild(btnode* r){
+    if(r == NULL) return 0;
+
+    int current =
+        (r->left == NULL && r->right != NULL) ||
+        (r->left != NULL && r->right == NULL);
+
+    return current
+        + countOneChild(r->left)
+        + countOneChild(r->right);
+}
+
+int countNodeWithOnlyLeftChild(btnode *r){
 	if(r == NULL) return 0;
 	int dem=0;
 	
@@ -179,29 +343,98 @@ int countNodeLeftChild(btnode *r){
 	return dem;
 }
 
-btnode* parent(btnode* r, btnode* p){
-	if(r == NULL) return NULL;
-	if(r->left == p || r->right == p) return r;
-	
-	btnode* q = parent(r->left,p);
-	if(q!=NULL) return q;
-	
-	return parent(r->right,p);
+int countNodeAtLevel(btnode* r, int k){
+    if(r == NULL || k <= 0) return 0;
+    if(k == 1) return 1;
+
+    return countNodeAtLevel(r->left, k - 1)
+         + countNodeAtLevel(r->right, k - 1);
 }
 
-int stepdepth(btnode* r, btnode* p, int k){
-	if(r == NULL) return 0;
-	if(r == p) return k;
-
-	int l1 = stepdepth(r->left, p, k+1);
-	if(l1!=0) return l1;
+int height(btnode *r){
+	if(r == NULL) return 0;	
 	
-	return stepdepth(r->right, p, k+1);
+	int hl = height(r->left);
+	int hr = height(r->right);
+	
+	if(hl>hr) return hl+1;
+	else return hr+1;
 }
 
-int depth(btnode* r, btnode* p){
-	if(r == NULL || p == NULL) return 0;
-	
-	return stepdepth(r,p,1);
+int depth(btnode* r, btnode* p) {
+  if (r == NULL || p == NULL) {
+    return -1;
+  }
+
+  if (r == p) {
+    return 0;
+  }
+
+  int leftDepth = depth(r->left, p);
+  if (leftDepth != -1) {
+    return leftDepth + 1;
+  }
+
+  int rightDepth = depth(r->right, p);
+  if (rightDepth != -1) {
+    return rightDepth + 1;
+  }
+
+  return -1;
 }
 
+int maxWidth(btnode* root){
+    if(root == NULL) return 0;
+
+    int h = height(root);
+    int result = 0;
+
+    for(int level = 1; level <= h; level++){
+        int currentWidth = countNodeAtLevel(root, level);
+
+        if(currentWidth > result)
+            result = currentWidth;
+    }
+
+    return result;
+}
+
+//Check
+int isLeaf(btnode* p){
+    return p != NULL && p->left == NULL && p->right == NULL;
+}
+
+int isSameTree(btnode* r1, btnode* r2){
+    if(r1 == NULL && r2 == NULL)
+        return 1;
+
+    if(r1 == NULL || r2 == NULL)
+        return 0;
+
+    return r1->data == r2->data
+        && isSameTree(r1->left, r2->left)
+        && isSameTree(r1->right, r2->right);
+}
+
+int isSameStructure(btnode* r1, btnode* r2){
+    if(r1 == NULL && r2 == NULL)
+        return 1;
+
+    if(r1 == NULL || r2 == NULL)
+        return 0;
+
+    return isSameStructure(r1->left, r2->left)
+        && isSameStructure(r1->right, r2->right);
+}
+
+//
+void mirrorTree(btnode* r){
+    if(r == NULL) return;
+
+    btnode* temp = r->left;
+    r->left = r->right;
+    r->right = temp;
+
+    mirrorTree(r->left);
+    mirrorTree(r->right);
+}
