@@ -70,6 +70,16 @@ btnode* findmin_bst(btnode* p){
   }
 }
 
+btnode* findmax_bst(btnode* r){
+    if(r == NULL) return NULL;
+
+    while(r->right != NULL){
+        r = r->right;
+    }
+
+    return r;
+}
+
 btnode *delete_bst(btnode *r, datatype v){
 	if(r==NULL) return NULL;
 	if(r->data == v) { //thuc hien xoa nut co khoa la v
@@ -108,5 +118,146 @@ btnode *delete_bst(btnode *r, datatype v){
 		r->right = delete_bst(r->right,v);
 	}
 	return r;
+}
+
+void inorder_bst(btnode* r){
+    if(r == NULL) return;
+
+    inorder_bst(r->left);
+    printf("%d ", r->data);
+    inorder_bst(r->right);
+}
+
+void reverseInorder_bst(btnode* r){
+    if(r == NULL) return;
+
+    reverseInorder_bst(r->right);
+    printf("%d ", r->data);
+    reverseInorder_bst(r->left);
+}
+
+int count_bst(btnode* r){
+    if(r == NULL) return 0;
+
+    return 1
+         + count_bst(r->left)
+         + count_bst(r->right);
+}
+
+int height_bst(btnode* r){
+    if(r == NULL) return 0;
+
+    int hl = height_bst(r->left);
+    int hr = height_bst(r->right);
+
+    return (hl > hr ? hl : hr) + 1;
+}
+
+int countLeaves_bst(btnode* r){
+    if(r == NULL) return 0;
+
+    if(r->left == NULL && r->right == NULL){
+        return 1;
+    }
+
+    return countLeaves_bst(r->left)
+         + countLeaves_bst(r->right);
+}
+
+btnode* deleteMin_bst(btnode* r){
+    if(r == NULL) return NULL;
+
+    if(r->left == NULL){
+        btnode* rightChild = r->right;
+        free(r);
+        return rightChild;
+    }
+
+    r->left = deleteMin_bst(r->left);
+    return r;
+}
+
+btnode* deleteMax_bst(btnode* r){
+    if(r == NULL) return NULL;
+
+    if(r->right == NULL){
+        btnode* leftChild = r->left;
+        free(r);
+        return leftChild;
+    }
+
+    r->right = deleteMax_bst(r->right);
+    return r;
+}
+
+btnode* predecessor_bst(btnode* root, datatype x){
+    btnode* result = NULL;
+
+    while(root != NULL){
+        if(root->data < x){
+            result = root;
+            root = root->right;
+        }
+        else{
+            root = root->left;
+        }
+    }
+
+    return result;
+}
+
+btnode* successor_bst(btnode* root, datatype x){
+    btnode* result = NULL;
+
+    while(root != NULL){
+        if(root->data > x){
+            result = root;
+            root = root->left;
+        }
+        else{
+            root = root->right;
+        }
+    }
+
+    return result;
+}
+
+btnode* kthSmallestHelper(btnode* r, int* k){
+    if(r == NULL) return NULL;
+
+    btnode* result = kthSmallestHelper(r->left, k);
+    if(result != NULL){
+        return result;
+    }
+
+    (*k)--;
+
+    if(*k == 0){
+        return r;
+    }
+
+    return kthSmallestHelper(r->right, k);
+}
+
+btnode* kthSmallest_bst(btnode* root, int k){
+    if(k <= 0) return NULL;
+
+    return kthSmallestHelper(root, &k);
+}
+
+void printRange_bst(btnode* r, datatype low, datatype high){
+    if(r == NULL) return;
+
+    if(r->data > low){
+        printRange_bst(r->left, low, high);
+    }
+
+    if(r->data >= low && r->data <= high){
+        printf("%d ", r->data);
+    }
+
+    if(r->data < high){
+        printRange_bst(r->right, low, high);
+    }
 }
 
